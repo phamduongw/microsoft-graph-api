@@ -11,9 +11,14 @@ localStorage = localStoragePy("micrsoft-graph-api")
 VAULT_URL = sys.argv[1]
 VAULT_TOKEN = sys.argv[2]
 ASSET_PATH = sys.argv[3]
-ASSET_NAME = ASSET_PATH.split("/")[-1]
 GIT_URL = sys.argv[4]
 GIT_COMMIT = sys.argv[5]
+
+ASSET_NAME = None
+try:
+    ASSET_NAME = sys.argv[6]
+except IndexError:
+    ASSET_NAME = ASSET_PATH.split("/")[-1]
 
 SECRET_DATA = getData(VAULT_URL, VAULT_TOKEN)
 CHAT_IDS = SECRET_DATA["chat-ids"].split(",")
