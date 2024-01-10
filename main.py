@@ -13,6 +13,7 @@ VAULT_TOKEN = sys.argv[2]
 ASSET_PATH = sys.argv[3]
 GIT_URL = sys.argv[4]
 GIT_COMMIT = sys.argv[5]
+GIT_LOG = sys.argv[7]
 
 ASSET_NAME = None
 try:
@@ -121,6 +122,7 @@ def main():
         ASSET_NAME,
         GIT_URL,
         GIT_COMMIT,
+        GIT_LOG,
     )
 
 

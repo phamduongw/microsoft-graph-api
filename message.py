@@ -3,7 +3,7 @@ import json
 
 
 def send(
-    accessToken, chatIds, attachmentId, attachmentURL, attachmentName, gitUrl, gitCommit
+    accessToken, chatIds, attachmentId, attachmentURL, attachmentName, gitUrl, gitCommit, gitLog
 ):
     headers = {
         "Authorization": f"Bearer {accessToken}",
@@ -17,7 +17,7 @@ def send(
         message = {
             "body": {
                 "contentType": "html",
-                "content": f'Latest build of <a href="{gitCommitURL}" target=_blank>{gitRepository}</a><attachment id="{attachmentId}"></attachment>',
+                "content": f'Latest build of <a href="{gitCommitURL}" target=_blank>{gitRepository}</a><attachment id="{attachmentId}"></attachment><br/>{gitLog}',
             },
             "attachments": [
                 {
