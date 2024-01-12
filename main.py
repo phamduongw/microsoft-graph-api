@@ -13,6 +13,7 @@ VAULT_TOKEN = sys.argv[2]
 ASSET_PATH = sys.argv[3]
 GIT_URL = sys.argv[4]
 GIT_COMMIT = sys.argv[5]
+GIT_LOG = sys.argv[7]
 
 ASSET_NAME = None
 try:
@@ -123,7 +124,10 @@ def main():
         GIT_COMMIT,
     )
 
-    sendLogMessage(localStorage.getItem("accessToken"), CHAT_IDS, sys.argv[7])
+    GIT_LOGS = [item for item in GIT_LOG.split("\n") if item.strip()]
+    GIT_LOG_MESSAGE = "<br/>".join(GIT_LOGS)
+
+    sendLogMessage(localStorage.getItem("accessToken"), CHAT_IDS, GIT_LOG_MESSAGE)
 
 
 if __name__ == "__main__":
