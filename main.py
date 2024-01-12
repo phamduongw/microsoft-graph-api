@@ -4,7 +4,7 @@ import requests
 
 from localStoragePy import localStoragePy
 from secret import getData
-from message import send
+from message import send, sendLogMessage
 
 localStorage = localStoragePy("micrsoft-graph-api")
 
@@ -13,7 +13,6 @@ VAULT_TOKEN = sys.argv[2]
 ASSET_PATH = sys.argv[3]
 GIT_URL = sys.argv[4]
 GIT_COMMIT = sys.argv[5]
-GIT_LOG = sys.argv[7]
 
 ASSET_NAME = None
 try:
@@ -122,8 +121,22 @@ def main():
         ASSET_NAME,
         GIT_URL,
         GIT_COMMIT,
-        GIT_LOG,
     )
+
+    GIT_LOG = re.findall(
+        r"^commit\s(.*)\n(Merge.*\n)*.*\n.*\n\s{4}(.*)\n*(\s{4}.*)*",
+        sys.argv[7],
+        flags=re.MULTILINE,
+    )
+
+    GIT_LOG_MESSAGE = ""
+    for log in GIT_LOG:
+        if log[1] == "":
+            GIT_LOG_MESSAGE += f"Commit:{log[0]}:<br/>Subject: {log[2].strip()}<br/>Description:{log[3].strip()}<br/><br/>"
+        else:
+            break
+
+    sendLogMessage(localStorage.getItem("accessToken"), CHAT_IDS, GIT_LOG_MESSAGE)
 
 
 if __name__ == "__main__":

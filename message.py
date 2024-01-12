@@ -3,7 +3,7 @@ import json
 
 
 def send(
-    accessToken, chatIds, attachmentId, attachmentURL, attachmentName, gitUrl, gitCommit, gitLog
+    accessToken, chatIds, attachmentId, attachmentURL, attachmentName, gitUrl, gitCommit
 ):
     headers = {
         "Authorization": f"Bearer {accessToken}",
@@ -17,7 +17,7 @@ def send(
         message = {
             "body": {
                 "contentType": "html",
-                "content": f'Latest build of <a href="{gitCommitURL}" target=_blank>{gitRepository}</a><attachment id="{attachmentId}"></attachment><br/>{gitLog}',
+                "content": f'Latest build of <a href="{gitCommitURL}" target=_blank>{gitRepository}</a><attachment id="{attachmentId}"></attachment>',
             },
             "attachments": [
                 {
@@ -35,6 +35,25 @@ def send(
                 "content": f'<p>Latest build of <a href="{gitCommitURL}" target=_blank>{gitRepository}</p><a href="{attachmentURL}" target="_blank">Click here to download</a>',
             },
         }
+
+    payload = json.dumps(message)
+
+    for chatId in chatIds:
+        url = f"https://graph.microsoft.com/v1.0/chats/{chatId}/messages"
+        requests.post(url, headers=headers, data=payload)
+
+
+def sendLogMessage(accessToken, chatIds, content):
+    headers = {
+        "Authorization": f"Bearer {accessToken}",
+        "Content-Type": "application/json",
+    }
+    message = {
+        "body": {
+            "contentType": "html",
+            "content": content,
+        },
+    }
 
     payload = json.dumps(message)
 
