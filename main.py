@@ -123,20 +123,7 @@ def main():
         GIT_COMMIT,
     )
 
-    GIT_LOG = re.findall(
-        r"^commit\s(.*)\n(Merge.*\n)*.*\n.*\n\s{4}(.*)\n*(\s{4}.*)*",
-        sys.argv[7],
-        flags=re.MULTILINE,
-    )
-
-    GIT_LOG_MESSAGE = ""
-    for log in GIT_LOG:
-        if log[1] == "":
-            GIT_LOG_MESSAGE += f"Commit:{log[0]}:<br/>Subject: {log[2].strip()}<br/>Description:{log[3].strip()}<br/><br/>"
-        else:
-            break
-
-    sendLogMessage(localStorage.getItem("accessToken"), CHAT_IDS, GIT_LOG_MESSAGE)
+    sendLogMessage(localStorage.getItem("accessToken"), CHAT_IDS, sys.argv[7])
 
 
 if __name__ == "__main__":
