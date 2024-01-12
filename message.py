@@ -2,7 +2,7 @@ import requests
 import json
 
 
-def send(
+def sendAttachment(
     accessToken, chatIds, attachmentId, attachmentURL, attachmentName, gitUrl, gitCommit
 ):
     headers = {
@@ -48,6 +48,7 @@ def sendLogMessage(accessToken, chatIds, content):
         "Authorization": f"Bearer {accessToken}",
         "Content-Type": "application/json",
     }
+
     message = {
         "body": {
             "contentType": "html",

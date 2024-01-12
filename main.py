@@ -4,9 +4,9 @@ import requests
 
 from localStoragePy import localStoragePy
 from secret import getData
-from message import send, sendLogMessage
+from message import sendAttachment, sendLogMessage
 
-localStorage = localStoragePy("micrsoft-graph-api")
+localStorage = localStoragePy("microsoft-graph-api")
 
 VAULT_URL = sys.argv[1]
 VAULT_TOKEN = sys.argv[2]
@@ -82,13 +82,13 @@ def createUploadSession():
 
     headers = {"Authorization": f"Bearer {localStorage.getItem('accessToken')}"}
 
-    responve = requests.post(url, headers=headers)
+    response = requests.post(url, headers=headers)
 
-    if responve.status_code == 401:
+    if response.status_code == 401:
         refreshAccessToken()
         return createUploadSession()
 
-    return responve.json()["uploadUrl"]
+    return response.json()["uploadUrl"]
 
 
 def uploadFile():
@@ -114,7 +114,7 @@ def uploadFile():
 def main():
     attachment = uploadFile()
 
-    send(
+    sendAttachment(
         localStorage.getItem("accessToken"),
         CHAT_IDS,
         attachment["id"],
