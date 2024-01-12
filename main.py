@@ -4,15 +4,16 @@ import requests
 
 from localStoragePy import localStoragePy
 from secret import getData
-from message import send
+from message import sendAttachment, sendLogMessage
 
-localStorage = localStoragePy("micrsoft-graph-api")
+localStorage = localStoragePy("microsoft-graph-api")
 
 VAULT_URL = sys.argv[1]
 VAULT_TOKEN = sys.argv[2]
 ASSET_PATH = sys.argv[3]
 GIT_URL = sys.argv[4]
 GIT_COMMIT = sys.argv[5]
+GIT_LOG = sys.argv[7]
 
 ASSET_NAME = None
 try:
@@ -81,13 +82,13 @@ def createUploadSession():
 
     headers = {"Authorization": f"Bearer {localStorage.getItem('accessToken')}"}
 
-    responve = requests.post(url, headers=headers)
+    response = requests.post(url, headers=headers)
 
-    if responve.status_code == 401:
+    if response.status_code == 401:
         refreshAccessToken()
         return createUploadSession()
 
-    return responve.json()["uploadUrl"]
+    return response.json()["uploadUrl"]
 
 
 def uploadFile():
@@ -113,7 +114,7 @@ def uploadFile():
 def main():
     attachment = uploadFile()
 
-    send(
+    sendAttachment(
         localStorage.getItem("accessToken"),
         CHAT_IDS,
         attachment["id"],
@@ -122,6 +123,11 @@ def main():
         GIT_URL,
         GIT_COMMIT,
     )
+
+    GIT_LOGS = [item for item in GIT_LOG.split("\n") if item.strip()]
+    GIT_LOG_MESSAGE = "<br/>".join(GIT_LOGS)
+
+    sendLogMessage(localStorage.getItem("accessToken"), CHAT_IDS, GIT_LOG_MESSAGE)
 
 
 if __name__ == "__main__":
