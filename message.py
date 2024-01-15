@@ -5,13 +5,13 @@ import json
 def sendAttachment(
     accessToken, chatIds, attachmentId, attachmentURL, attachmentName, gitUrl, gitCommit
 ):
+    gitCommitURL = f'{gitUrl.split(".git")[0]}/commit/{gitCommit}'
+    gitRepository = f'{gitUrl.split("/")[-1].split(".")[0]}/{gitCommit}'
+
     headers = {
         "Authorization": f"Bearer {accessToken}",
         "Content-Type": "application/json",
     }
-
-    gitCommitURL = f'{gitUrl.split(".git")[0]}/commit/{gitCommit}'
-    gitRepository = f'{gitUrl.split("/")[-1].split(".")[0]}/{gitCommit}'
 
     if "." in attachmentName:
         message = {
@@ -61,3 +61,31 @@ def sendLogMessage(accessToken, chatIds, content):
     for chatId in chatIds:
         url = f"https://graph.microsoft.com/v1.0/chats/{chatId}/messages"
         requests.post(url, headers=headers, data=payload)
+
+
+def sendErrorMessage(accessToken, chatIds, jobName, jenkinsUrl, buildId):
+    job = jobName.split("/")
+    log = f"{jenkinsUrl}/job/{job[0]}/job/{job[1]}/{buildId}/console"
+
+    headers = {
+        "Authorization": f"Bearer {accessToken}",
+        "Content-Type": "application/json",
+    }
+
+    message = {
+        "body": {
+            "contentType": "html",
+            "content": f'❌ CI/CD Pipeline ❌<br/>- Job: <a href="{log}" target=_blank>{jobName}/{buildId}</a><br/>- Status: <span style="color:red;">FAILED</span/>',
+        },
+    }
+
+    payload = json.dumps(message)
+
+    for chatId in chatIds:
+        url = f"https://graph.microsoft.com/v1.0/chats/{chatId}/messages"
+        response = requests.post(url, headers=headers, data=payload)
+
+        if response.status_code == 401:
+            return False
+
+    return True
